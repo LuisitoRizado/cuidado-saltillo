@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function LoginPage() {
-  console.log("data : ", data);
   return (
     <div className="min-h-screen bg-zinc-50">
       <div className="grid min-h-screen md:grid-cols-2">
