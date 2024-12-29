@@ -1,39 +1,18 @@
-import { Map, Marker } from "pigeon-maps";
-import { osm } from "pigeon-maps/providers";
-import { useState, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+import CreateReport from "./pages/createReport/CreateReport";
+import Home from "./pages/home/Home";
+import LoginPage from "./pages/auth/login/pages/LoginPage";
+import RegisterPage from "./pages/auth/register/pages/RegisterPage";
 
-export function MyMap() {
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null
-  );
-
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation([latitude, longitude]);
-        },
-        (error) => {
-          console.error("Error al obtener la ubicación:", error.message);
-          setUserLocation([25.4231, -100.9919]);
-        }
-      );
-    } else {
-      console.error("Geolocalización no está soportada en este navegador.");
-      setUserLocation([25.4231, -100.9919]);
-    }
-  }, []);
-
+const App = () => {
   return (
-    <Map
-      provider={osm}
-      height={1000}
-      center={userLocation || [25.4231, -100.9919]}
-      defaultZoom={16}
-    >
-      {userLocation && <Marker width={50} anchor={userLocation} />}
-      <Marker width={100} anchor={[50.883, 4.68]} />
-    </Map>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/crear-reporte" element={<CreateReport />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+    </Routes>
   );
-}
+};
+export default App;
