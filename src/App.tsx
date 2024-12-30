@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import CreateReport from "./pages/createReport/CreateReport";
+import CreateReport from "./pages/createReport/CreateReportPage";
 import Home from "./pages/home/Home";
 import LoginPage from "./pages/auth/login/pages/LoginPage";
 import RegisterPage from "./pages/auth/register/pages/RegisterPage";

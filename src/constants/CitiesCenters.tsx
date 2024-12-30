@@ -1,0 +1,3 @@
+export const UBICACION_CENTRO_CIUDADES = {
+  SALTILLO: [25.4231, -100.9919],
+};

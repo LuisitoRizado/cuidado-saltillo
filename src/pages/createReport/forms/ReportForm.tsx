@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { TIPOS_CRIMENES } from "@/constants/TiposCrimenes";
-import { NIVELES_SEGURIDAD } from "@/constants/NivelesInseguridad";
+import { MapSelectPlace } from "../components/MapSelectPlace";
 
 export default function ReportForm() {
   const [formData, setFormData] = useState({
@@ -48,74 +48,20 @@ export default function ReportForm() {
     navigate("/");
   };
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle>Crear Reporte de Lugar Peligroso</CardTitle>
+        <CardTitle>Generar reporte de incidente</CardTitle>
       </CardHeader>
       <CardContent>
+        <p className="bold text-gray-600">
+          Selecciona la ubicación del incidente:{" "}
+        </p>
+        <MapSelectPlace />
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="latitud">Latitud</Label>
-              <Input
-                id="latitud"
-                name="latitud"
-                value={formData.latitud}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="longitud">Longitud</Label>
-              <Input
-                id="longitud"
-                name="longitud"
-                value={formData.longitud}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
+          <div className="grid grid-cols-2 gap-4"></div>
+
           <div>
-            <Label htmlFor="direccion">Dirección</Label>
-            <Input
-              id="direccion"
-              name="direccion"
-              value={formData.direccion}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="descripcion">Descripción del incidente</Label>
-            <Textarea
-              id="descripcion"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="nivelInseguridad">Nivel de Inseguridad</Label>
-            <Select
-              onValueChange={handleSelectChange}
-              value={formData.nivelInseguridad}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccione un nivel" />
-              </SelectTrigger>
-              <SelectContent>
-                {NIVELES_SEGURIDAD.map((nivel) => (
-                  <SelectItem key={nivel.codigo} value={nivel.codigo}>
-                    {nivel.nombre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="nivelInseguridad">Tipo de Crimen</Label>
+            <Label htmlFor="nivelInseguridad">Tipo de incidente:</Label>
             <Select
               onValueChange={handleSelectChange}
               value={formData.nivelInseguridad}
@@ -133,7 +79,35 @@ export default function ReportForm() {
             </Select>
           </div>
           <div>
-            <Label htmlFor="fechaReporte">Fecha del Reporte</Label>
+            <Label htmlFor="estatusIncidente">Estatus:</Label>
+            <Select
+              onValueChange={handleSelectChange}
+              value={formData.nivelInseguridad}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccione un estatus" />
+              </SelectTrigger>
+              <SelectContent>
+                {TIPOS_CRIMENES.map((nivel) => (
+                  <SelectItem key={nivel.codigo} value={nivel.codigo}>
+                    {nivel.nombre}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="descripcion">Descripción del incidente:</Label>
+            <Textarea
+              id="descripcion"
+              name="descripcion"
+              value={formData.descripcion}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="fechaReporte">Fecha en que sucedió:</Label>
             <Input
               id="fechaReporte"
               name="fechaReporte"

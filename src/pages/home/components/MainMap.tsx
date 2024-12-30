@@ -3,8 +3,9 @@ import { Map, Marker, Overlay } from "pigeon-maps";
 import { osm } from "pigeon-maps/providers";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import Spinner from "@/customComponents/Spinner";
 import { useScreenSize } from "@/customHooks/useScreenSize";
+import { useUserLocation } from "@/customHooks/useUserLocation";
+import LocationLoader from "@/customComponents/LocationLoader";
 
 interface Lugar {
   id: number;
@@ -18,66 +19,35 @@ interface Lugar {
 }
 
 const MainMap = () => {
-  const [lugares, setLugares] = useState<Lugar[]>([]);
+  const [lugares, _] = useState<Lugar[]>([]);
   const [selectedLugar, setSelectedLugar] = useState<Lugar | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [zoom, setZoom] = useState(16);
   const mapRef = useRef<Map>(null);
   const { toast } = useToast();
   const { screenSize } = useScreenSize();
+
+  const { userLocation: mapCenter, error } = useUserLocation();
+
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setMapCenter([latitude, longitude]);
-        },
-        () => {
-          toast({
-            variant: "destructive",
-            title: "Ubicación",
-            description: "Error al obtener la ubicación",
-          });
-          setMapCenter([25.4231, -100.9919]);
-        },
-      );
-    } else {
+    if (error) {
       toast({
         variant: "destructive",
         title: "Ubicación",
-        description: "Error al obtener la ubicación",
+        description: error,
       });
-      setMapCenter([25.4231, -100.9919]);
     }
-  }, [toast]);
+  }, [error, toast]);
 
   useEffect(() => {
     const fetchLugares = async () => {
-      try {
-        const res = await fetch("http://localhost:3000/lugares");
-
-        if (!res.ok) {
-          throw new Error("Error al obtener los lugares");
-        }
-
-        const data = await res.json();
-        setLugares(data);
-      } catch (err: unknown) {
-        console.error("Error fetching lugares:", err);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "No se pudieron cargar los lugares",
-        });
-      }
+      console.log("lógica para cargar lugares");
     };
 
     fetchLugares();
-  }, [toast]);
+  }, []);
 
   const handleMarkerClick = (lugar: Lugar) => {
     setSelectedLugar(lugar);
-    setMapCenter([parseFloat(lugar.latitud), parseFloat(lugar.longitud)]);
   };
 
   const closeInfoCard = () => {
@@ -88,7 +58,7 @@ const MainMap = () => {
     <Card className="relative">
       <CardContent className="p-0">
         {!mapCenter ? (
-          <Spinner />
+          <LocationLoader />
         ) : (
           <Map
             width={screenSize.width - 50}
@@ -97,7 +67,6 @@ const MainMap = () => {
             center={mapCenter}
             zoom={zoom}
             onBoundsChanged={({ center, zoom }) => {
-              setMapCenter(center);
               setZoom(zoom);
             }}
             onClick={closeInfoCard}
