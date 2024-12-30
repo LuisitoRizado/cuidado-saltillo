@@ -4,24 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginUserMutation } from "../store/login.api.types";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import Spinner from "@/customComponents/Spinner";
+import { Formik, Form, ErrorMessage } from "formik";
+import {
+  loginFormInitialValues,
+  loginFormValidationSchema,
+} from "./LoginPage.exports";
 export default function LoginPage() {
   const [apiLoginUser, { isLoading }] = useLoginUserMutation();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
   const { toast } = useToast();
-  const onHandleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-  const onHandlePassword = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
 
-  const onLogin = async () => {
+  const onLogin = async (email: string, password: string) => {
     try {
       const res = await apiLoginUser({ email, password }).unwrap();
 
@@ -64,49 +60,80 @@ export default function LoginPage() {
               </p>
             </div>
             <div className="grid gap-6 md:gap-10">
-              <form>
-                <div className="grid gap-4 md:gap-8">
-                  <div className="grid gap-2 md:gap-4">
-                    <Label
-                      htmlFor="email"
-                      className="text-base md:text-2xl font-semibold text-gray-800"
-                    >
-                      Correo electrónico
-                    </Label>
-                    <Input
-                      id="email"
-                      placeholder="nombre@ejemplo.com"
-                      type="email"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect="off"
-                      onChange={onHandleEmail}
-                      className="p-3 md:p-5 text-base md:text-xl"
-                    />
-                  </div>
-                  <div className="grid gap-2 md:gap-4">
-                    <Label
-                      htmlFor="password"
-                      className="text-base md:text-2xl font-semibold text-gray-800"
-                    >
-                      Contraseña
-                    </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      onChange={onHandlePassword}
-                      className="p-3 md:p-5 text-base md:text-xl"
-                    />
-                  </div>
-                  <Button
-                    className="bg-navbar-dark hover:bg-emerald-600 py-3 px-6 md:py-4 md:px-8 text-base md:text-xl font-bold"
-                    disabled={isLoading}
-                    onClick={onLogin}
-                  >
-                    {isLoading ? <Spinner /> : <>Iniciar sesión</>}
-                  </Button>
-                </div>
-              </form>
+              <Formik
+                initialValues={loginFormInitialValues}
+                validationSchema={loginFormValidationSchema}
+                onSubmit={(values, { setSubmitting }) => {
+                  console.log("Valores enviados:", values);
+                  onLogin(values.email, values.password);
+                  setSubmitting(false);
+                }}
+              >
+                {({ values, handleChange, handleBlur }) => (
+                  <Form>
+                    <div className="grid gap-4 md:gap-8">
+                      <div className="grid gap-2 md:gap-4">
+                        <Label
+                          htmlFor="email"
+                          className="text-base md:text-2xl font-semibold text-gray-800"
+                        >
+                          Correo electrónico
+                        </Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          placeholder="nombre@ejemplo.com"
+                          type="email"
+                          autoCapitalize="none"
+                          autoComplete="email"
+                          autoCorrect="off"
+                          className="p-3 md:p-5 text-base md:text-xl"
+                          value={values.email}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <ErrorMessage
+                          name="email"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
+                      </div>
+
+                      <div className="grid gap-2 md:gap-4">
+                        <Label
+                          htmlFor="password"
+                          className="text-base md:text-2xl font-semibold text-gray-800"
+                        >
+                          Contraseña
+                        </Label>
+                        <Input
+                          id="password"
+                          name="password"
+                          type="password"
+                          className="p-3 md:p-5 text-base md:text-xl"
+                          value={values.password}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <ErrorMessage
+                          name="password"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="bg-navbar-dark hover:bg-emerald-600 py-3 px-6 md:py-4 md:px-8 text-base md:text-xl font-bold"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? <Spinner /> : <>Iniciar sesión</>}
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+
               <div className="text-center text-sm md:text-lg">
                 ¿No tienes una cuenta?{" "}
                 <Link to="/register" className="text-gray-600 hover:underline">
