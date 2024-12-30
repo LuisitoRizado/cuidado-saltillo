@@ -19,11 +19,16 @@ export const axiosBaseQuery =
         method,
         data,
         params,
-        baseURL: "http://localhost:3030/",
+        baseURL: "http://localhost:3030/api",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+      console.log("Respuesta del servidor:", result);
       return { data: result.data };
     } catch (error) {
       const axiosError = error as AxiosError;
+      console.error("Error en la solicitud:", axiosError.response);
       return {
         error: {
           status: axiosError.response?.status || 500,

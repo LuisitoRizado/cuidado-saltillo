@@ -1,11 +1,19 @@
 import { baseApi } from "@/api/baseApi";
+import { API_CONSTANTS } from "@/services/RtkQueryConstants";
+import { LoginUserRequest, LoginUserResponse } from "./login.api";
+
+const urlLogin = API_CONSTANTS.AUTH.LOGIN;
 
 export const loginApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    loginUser: builder.query<unknown, unknown>({
-      query: () => ({ url: "/login", method: "GET" }),
+    loginUser: builder.mutation<LoginUserResponse, LoginUserRequest>({
+      query: (data: LoginUserRequest) => ({
+        url: urlLogin,
+        method: "POST",
+        data,
+      }),
     }),
   }),
 });
 
-export const { useLoginUserQuery } = loginApi;
+export const { useLoginUserMutation } = loginApi;
