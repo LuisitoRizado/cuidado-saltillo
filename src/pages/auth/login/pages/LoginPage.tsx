@@ -25,6 +25,7 @@ export default function LoginPage() {
         localStorage.setItem("jwtToken", res.token);
         navigate("/home");
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       const errorMessage =
         error?.data?.message ||
